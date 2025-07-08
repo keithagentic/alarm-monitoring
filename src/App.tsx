@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
+import { AlarmList } from '@/components/alarm/AlarmList';
+import { CSOManagement } from '@/components/cso/CSOManagement';
 import { useAlarmStore } from '@/store/alarmStore';
 
 function App() {
@@ -18,19 +20,9 @@ function App() {
       case 'dashboard':
         return <DashboardOverview />;
       case 'alarms':
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Active Alarms</h2>
-            <p className="text-gray-600">Alarm management interface coming soon...</p>
-          </div>
-        );
+        return <AlarmList />;
       case 'csos':
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">CSO Status</h2>
-            <p className="text-gray-600">CSO management interface coming soon...</p>
-          </div>
-        );
+        return <CSOManagement />;
       case 'ai-agents':
         return (
           <div className="p-6">
