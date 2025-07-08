@@ -84,6 +84,9 @@ export default {
           600: 'hsl(200 98% 39%)',
         },
       },
+      borderColor: {
+        'app-border': 'hsl(214.3 31.8% 91.4%)',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
