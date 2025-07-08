@@ -1,20 +1,63 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Header } from '@/components/layout/Header';
+import { Sidebar } from '@/components/layout/Sidebar';
+import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
+import { useAlarmStore } from '@/store/alarmStore';
 
 function App() {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const { initializeMockData } = useAlarmStore();
+
+  useEffect(() => {
+    // Initialize mock data when app loads
+    initializeMockData();
+  }, [initializeMockData]);
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return <DashboardOverview />;
+      case 'alarms':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Active Alarms</h2>
+            <p className="text-gray-600">Alarm management interface coming soon...</p>
+          </div>
+        );
+      case 'csos':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">CSO Status</h2>
+            <p className="text-gray-600">CSO management interface coming soon...</p>
+          </div>
+        );
+      case 'ai-agents':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">AI Agents</h2>
+            <p className="text-gray-600">AI agent management interface coming soon...</p>
+          </div>
+        );
+      default:
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">{activeTab}</h2>
+            <p className="text-gray-600">This section is under development...</p>
+          </div>
+        );
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold text-primary-600 mb-4">
-          Agentic Alarm Monitoring System
-        </h1>
-        <div className="bg-white border border-border rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600">
-            Application is now running successfully! 🎉
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            Ready to implement the alarm monitoring dashboard.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-100">
+      <Header />
+      <div className="flex h-[calc(100vh-73px)]">
+        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <main className="flex-1 overflow-auto">
+          <div className="p-6">
+            {renderContent()}
+          </div>
+        </main>
       </div>
     </div>
   );

@@ -1,57 +1,55 @@
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export function formatTime(date: Date): string {
-  return new Intl.DateTimeFormat('en-US', {
+  return date.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  }).format(date);
+    second: '2-digit'
+  });
 }
 
 export function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('en-US', {
+  return date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
-    year: 'numeric',
-  }).format(date);
+    year: 'numeric'
+  });
+}
+
+export function getAlarmTypeColor(type: string): string {
+  const colors = {
+    fire: 'text-red-600 bg-red-50',
+    intrusion: 'text-orange-600 bg-orange-50',
+    medical: 'text-blue-600 bg-blue-50',
+    panic: 'text-purple-600 bg-purple-50',
+    technical: 'text-gray-600 bg-gray-50'
+  };
+  return colors[type as keyof typeof colors] || colors.technical;
 }
 
 export function getPriorityColor(priority: string): string {
-  switch (priority) {
-    case 'critical':
-      return 'bg-red-100 text-red-800 border-red-200';
-    case 'high':
-      return 'bg-orange-100 text-orange-800 border-orange-200';
-    case 'medium':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'low':
-      return 'bg-green-100 text-green-800 border-green-200';
-    default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-  }
+  const colors = {
+    critical: 'text-red-700 bg-red-100 border-red-200',
+    high: 'text-orange-700 bg-orange-100 border-orange-200',
+    medium: 'text-yellow-700 bg-yellow-100 border-yellow-200',
+    low: 'text-green-700 bg-green-100 border-green-200'
+  };
+  return colors[priority as keyof typeof colors] || colors.medium;
 }
 
 export function getStatusColor(status: string): string {
-  switch (status) {
-    case 'new':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
-    case 'acknowledged':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'investigating':
-      return 'bg-orange-100 text-orange-800 border-orange-200';
-    case 'dispatched':
-      return 'bg-purple-100 text-purple-800 border-purple-200';
-    case 'resolved':
-      return 'bg-green-100 text-green-800 border-green-200';
-    case 'false_alarm':
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-    default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-  }
+  const colors = {
+    new: 'text-red-700 bg-red-100',
+    acknowledged: 'text-yellow-700 bg-yellow-100',
+    in_progress: 'text-blue-700 bg-blue-100',
+    dispatched: 'text-purple-700 bg-purple-100',
+    resolved: 'text-green-700 bg-green-100',
+    false_alarm: 'text-gray-700 bg-gray-100'
+  };
+  return colors[status as keyof typeof colors] || colors.new;
 }

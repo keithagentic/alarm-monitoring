@@ -1,30 +1,49 @@
+// Core data models for the alarm monitoring system
+
 export interface Alarm {
   id: string;
   timestamp: Date;
   type: 'fire' | 'intrusion' | 'medical' | 'panic' | 'technical';
   priority: 'critical' | 'high' | 'medium' | 'low';
-  status: 'new' | 'acknowledged' | 'investigating' | 'dispatched' | 'resolved' | 'false_alarm';
+  status: 'new' | 'acknowledged' | 'in_progress' | 'dispatched' | 'resolved' | 'false_alarm';
   location: {
     address: string;
-    coordinates?: { lat: number; lng: number };
     zone?: string;
+    coordinates?: { lat: number; lng: number };
   };
   customer: {
     id: string;
     name: string;
     phone: string;
-    contactPerson: string;
+    contactPerson?: string;
   };
-  aiAnalysis: {
-    riskScore: number; // 0-100
-    confidence: number; // 0-100
-    recommendations: string[];
-    falseAlarmProbability: number;
-    suggestedActions: string[];
+  device: {
+    id: string;
+    type: string;
+    description: string;
   };
+  aiAnalysis?: AIAnalysis;
   assignedCSO?: string;
-  responseTime?: number; // seconds
-  notes: string[];
+  notes: AlarmNote[];
+  responseTime?: number; // in seconds
+}
+
+export interface AIAnalysis {
+  riskScore: number; // 0-100
+  confidence: number; // 0-100
+  recommendation: 'dispatch' | 'verify' | 'monitor' | 'false_alarm';
+  reasoning: string;
+  contextualInfo: string[];
+  predictedOutcome: string;
+  suggestedActions: string[];
+}
+
+export interface AlarmNote {
+  id: string;
+  timestamp: Date;
+  author: string;
+  content: string;
+  type: 'system' | 'cso' | 'ai';
 }
 
 export interface CSO {
@@ -35,34 +54,17 @@ export interface CSO {
   currentAlarms: string[];
   performance: {
     averageResponseTime: number;
-    alarmsHandledToday: number;
-    accuracyScore: number;
+    alarmsHandled: number;
+    accuracy: number;
   };
-  aiAssistanceLevel: 'basic' | 'enhanced' | 'expert';
+  aiAssistanceLevel: 'minimal' | 'moderate' | 'high';
 }
 
-export interface AIAgent {
-  id: string;
-  type: 'triage' | 'communication' | 'documentation' | 'analytics';
-  status: 'active' | 'inactive' | 'processing';
-  confidence: number;
-  lastActivity: Date;
-}
-
-export interface AIAgentResponse {
-  agentType: 'triage' | 'communication' | 'documentation' | 'analytics';
-  timestamp: Date;
-  confidence: number;
-  recommendation: string;
-  reasoning: string[];
-  suggestedActions: string[];
-}
-
-export interface Notification {
-  id: string;
-  type: 'info' | 'warning' | 'error' | 'success';
-  title: string;
-  message: string;
-  timestamp: Date;
-  read: boolean;
+export interface SystemStats {
+  activeAlarms: number;
+  totalAlarmsToday: number;
+  averageResponseTime: number;
+  falseAlarmRate: number;
+  aiAccuracy: number;
+  csoUtilization: number;
 }
