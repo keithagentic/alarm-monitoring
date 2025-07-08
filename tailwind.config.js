@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        border: 'hsl(214.3 31.8% 91.4%)',
+        'app-border': 'hsl(214.3 31.8% 91.4%)',
         input: 'hsl(214.3 31.8% 91.4%)',
         ring: 'hsl(221.2 83.2% 53.3%)',
         background: 'hsl(0 0% 100%)',
