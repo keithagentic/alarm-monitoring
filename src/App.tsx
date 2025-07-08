@@ -25,27 +25,31 @@ function App() {
         return <CSOManagement />;
       case 'ai-agents':
         return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">AI Agents</h2>
-            <p className="text-gray-600">AI agent management interface coming soon...</p>
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">AI Agents</h2>
+              <p className="text-gray-600">AI agent management interface coming soon...</p>
+            </div>
           </div>
         );
       default:
         return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">{activeTab}</h2>
-            <p className="text-gray-600">This section is under development...</p>
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-2 capitalize">{activeTab}</h2>
+              <p className="text-gray-600">This section is under development...</p>
+            </div>
           </div>
         );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50/30">
       <Header />
       <div className="flex h-[calc(100vh-73px)]">
         <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto bg-gradient-to-br from-gray-50/50 to-white">
           <div className="p-6">
             {renderContent()}
           </div>

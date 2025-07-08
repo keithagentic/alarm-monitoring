@@ -29,8 +29,8 @@ const navigationItems = [
 
 export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   return (
-    <aside className="w-64 bg-gray-50 border-r border-gray-200 h-full">
-      <nav className="p-4 space-y-2">
+    <aside className="w-64 bg-gray-50/50 border-r border-gray-200/60 h-full">
+      <nav className="p-4 space-y-1">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -40,13 +40,16 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
               key={item.id}
               onClick={() => onTabChange(item.id)}
               className={cn(
-                'w-full flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group',
                 isActive
-                  ? 'bg-primary-100 text-primary-700 border border-primary-200'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-gray-600 hover:bg-white hover:text-gray-900 hover:shadow-sm'
               )}
             >
-              <Icon className="h-5 w-5" />
+              <Icon className={cn(
+                'h-5 w-5 transition-colors',
+                isActive ? 'text-primary-foreground' : 'text-gray-400 group-hover:text-gray-600'
+              )} />
               <span>{item.label}</span>
             </button>
           );

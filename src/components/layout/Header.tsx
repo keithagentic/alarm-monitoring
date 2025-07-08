@@ -8,47 +8,49 @@ export function Header() {
   const { systemStats } = useAlarmStore();
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
+    <header className="bg-white/95 backdrop-blur-sm border-b border-gray-200/60 px-6 py-4 sticky top-0 z-40">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <Shield className="h-8 w-8 text-primary-600" />
-            <h1 className="text-xl font-bold text-gray-900">Grandstand</h1>
+            <div className="p-2 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg shadow-sm">
+              <Shield className="h-5 w-5 text-white" />
+            </div>
+            <h1 className="text-xl font-bold text-gray-900 tracking-tight">Grandstand</h1>
           </div>
-          <Badge variant="info" className="ml-4">
+          <Badge variant="info" className="ml-4 font-medium">
             AI-Enhanced Monitoring
           </Badge>
         </div>
 
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-8">
           {/* System Stats */}
-          <div className="flex items-center space-x-4 text-sm">
-            <div className="flex items-center space-x-1">
+          <div className="hidden md:flex items-center space-x-6 text-sm">
+            <div className="flex items-center space-x-1.5">
               <span className="text-gray-500">Active:</span>
-              <span className="font-semibold text-red-600">{systemStats.activeAlarms}</span>
+              <span className="font-semibold text-danger">{systemStats.activeAlarms}</span>
             </div>
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1.5">
               <span className="text-gray-500">Today:</span>
-              <span className="font-semibold">{systemStats.totalAlarmsToday}</span>
+              <span className="font-semibold text-gray-900">{systemStats.totalAlarmsToday}</span>
             </div>
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1.5">
               <span className="text-gray-500">Avg Response:</span>
-              <span className="font-semibold">{systemStats.averageResponseTime}s</span>
+              <span className="font-semibold text-gray-900">{systemStats.averageResponseTime}s</span>
             </div>
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1.5">
               <span className="text-gray-500">AI Accuracy:</span>
-              <span className="font-semibold text-green-600">{systemStats.aiAccuracy}%</span>
+              <span className="font-semibold text-success">{systemStats.aiAccuracy}%</span>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <Button variant="ghost" size="sm" className="relative">
               <Bell className="h-4 w-4" />
               {systemStats.activeAlarms > 0 && (
-                <Badge variant="danger" className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                <span className="absolute -top-1 -right-1 h-4 w-4 bg-danger text-white text-xs rounded-full flex items-center justify-center font-medium">
                   {systemStats.activeAlarms}
-                </Badge>
+                </span>
               )}
             </Button>
             <Button variant="ghost" size="sm">
