@@ -1,0 +1,127 @@
+sequenceDiagram
+    participant AP as Alarm Panel
+    participant AGW as API Gateway
+    participant AIA as Alarm Intake Agent
+    participant AOr as Agent Orchestrator
+    participant ATA as Alarm Triage Agent
+    participant MCP as MCP Server
+    participant CDB as Customer DB Tool
+    participant WAPI as Weather API Tool
+    participant BED as Bedrock Tool
+    participant RA as Risk Assessment Agent
+    participant CA as Communication Agent
+    participant CSO as CSO Dashboard
+    participant SG as SMS Gateway Tool
+    participant ED as Emergency Dispatch Tool
+    participant DOC as Documentation Agent
+
+    Note over AP,DOC: Baseline Alarm Triage Flow - Agent-Oriented Architecture
+
+    %% Alarm Ingestion
+    AP->>+AGW: POST /api/v1/alarms<br/>{"type":"Burglar","location":"123 Main St","customerId":"CUST001"}
+    AGW->>+AIA: Lambda Invoke<br/>AlarmIngressEvent
+    
+    Note over AIA: Alarm Intake Agent<br/>Validates and enriches<br/>incoming alarm data
+    
+    AIA->>+MCP: GET /mcp/tools?agentId=intake-001
+    MCP-->>-AIA: Available tools list
+    
+    AIA->>+MCP: POST /mcp/invoke<br/>{"tool":"customer_database","params":{"customerId":"CUST001"}}
+    MCP->>+CDB: Query customer data
+    CDB-->>-MCP: Customer info + alarm history
+    MCP-->>-AIA: Tool execution result
+    
+    AIA->>+AOr: Agent Message<br/>AlarmReadyForTriage
+    AOr-->>-AIA: Ack
+    AGW-->>-AP: 202 Accepted<br/>{"alarmId":"ALM001","status":"processing"}
+
+    %% Agent Orchestration
+    Note over AOr: Agent Orchestrator<br/>Routes alarm to appropriate<br/>triage agent based on type/priority
+    
+    AOr->>+ATA: Agent Message<br/>TriageAlarmRequest
+    
+    Note over ATA: Alarm Triage Agent<br/>Autonomous analysis using<br/>multiple data sources
+    
+    %% Triage Agent Tool Usage
+    ATA->>+MCP: POST /mcp/invoke<br/>{"tool":"weather_api","params":{"location":"123 Main St"}}
+    MCP->>+WAPI: Get current weather conditions
+    WAPI-->>-MCP: Weather data
+    MCP-->>-ATA: Weather conditions
+    
+    ATA->>+MCP: POST /mcp/invoke<br/>{"tool":"bedrock_claude","params":{"prompt":"Analyze burglar alarm..."}}
+    MCP->>+BED: Invoke Claude model
+    BED-->>-MCP: AI analysis result
+    MCP-->>-ATA: Risk assessment
+    
+    %% Triage Decision
+    Note over ATA: Agent processes all data<br/>and makes autonomous<br/>triage decision
+    
+    alt High Risk Alarm
+        ATA->>+RA: Agent Message<br/>EscalateForRiskAssessment
+        
+        Note over RA: Risk Assessment Agent<br/>Performs detailed threat<br/>analysis for high-risk alarms
+        
+        RA->>+MCP: POST /mcp/invoke<br/>{"tool":"crime_database","params":{"location":"123 Main St"}}
+        MCP-->>-RA: Local crime statistics
+        
+        RA->>+MCP: POST /mcp/invoke<br/>{"tool":"bedrock_claude","params":{"prompt":"Advanced risk analysis..."}}
+        MCP->>+BED: Advanced AI analysis
+        BED-->>-MCP: Detailed risk assessment
+        MCP-->>-RA: Risk analysis
+        
+        RA->>+ATA: Agent Message<br/>RiskAssessmentComplete<br/>{"riskLevel":"CRITICAL","confidence":0.95}
+        ATA-->>-RA: Ack
+        
+        %% Critical Path - Immediate Dispatch
+        ATA->>+CA: Agent Message<br/>EmergencyDispatchRequired
+        
+        Note over CA: Communication Agent<br/>Handles emergency dispatch<br/>and notifications
+        
+        CA->>+MCP: POST /mcp/invoke<br/>{"tool":"emergency_dispatch","params":{"location":"123 Main St","type":"Burglar"}}
+        MCP->>+ED: Dispatch emergency services
+        ED-->>-MCP: Dispatch confirmation
+        MCP-->>-CA: Emergency units dispatched
+        
+        CA->>+CSO: WebSocket<br/>CriticalAlarmAlert<br/>{"alarmId":"ALM001","dispatchStatus":"DISPATCHED"}
+        
+    else Medium/Low Risk Alarm
+        ATA->>+CA: Agent Message<br/>CustomerVerificationRequired
+        
+        CA->>+MCP: POST /mcp/invoke<br/>{"tool":"sms_gateway","params":{"phone":"+15551234567","message":"Alarm detected..."}}
+        MCP->>+SG: Send SMS notification
+        SG-->>-MCP: SMS sent confirmation
+        MCP-->>-CA: Notification sent
+        
+        CA->>+CSO: WebSocket<br/>AlarmForVerification<br/>{"alarmId":"ALM001","status":"PENDING_VERIFICATION"}
+    end
+
+    %% CSO Interface Update
+    CSO->>+CSO: Display alarm with<br/>AI analysis and<br/>recommended actions
+    
+    %% Documentation
+    ATA->>+DOC: Agent Message<br/>DocumentTriageDecision
+    
+    Note over DOC: Documentation Agent<br/>Automatically creates<br/>audit trail and case notes
+    
+    DOC->>+MCP: POST /mcp/invoke<br/>{"tool":"case_management","params":{"alarmId":"ALM001","actions":[...]}}
+    MCP-->>-DOC: Case updated
+    
+    %% Human Operator Action
+    alt CSO Takes Action
+        CSO->>+AGW: POST /api/v1/alarms/ALM001/resolve<br/>{"action":"FALSE_ALARM","notes":"Customer confirmed accidental trigger"}
+        AGW->>+ATA: Human Decision Event
+        ATA->>+DOC: Agent Message<br/>UpdateCaseResolution
+        DOC->>+MCP: POST /mcp/invoke<br/>{"tool":"case_management","params":{"resolution":"FALSE_ALARM"}}
+        MCP-->>-DOC: Case closed
+        AGW-->>-CSO: Case updated
+    else Auto-Resolution (Future Capability)
+        Note over ATA: As AI models improve,<br/>more cases can be<br/>resolved autonomously
+        ATA->>ATA: Autonomous resolution<br/>based on pattern recognition
+    end
+
+    %% Agent Learning and Optimization
+    Note over ATA,DOC: All agents continuously learn<br/>from outcomes to improve<br/>future decision accuracy
+
+    rect rgb(240, 248, 255)
+        Note over AP,DOC: Key Agent Architecture Benefits:<br/>• Autonomous decision-making by specialized agents<br/>• MCP enables flexible tool integration<br/>• Event-driven communication scales with volume<br/>• Agents learn and improve over time<br/>• Human operators focus on complex cases
+    end
